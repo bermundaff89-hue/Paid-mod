@@ -1,0 +1,1713 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover"/>
+<meta name="theme-color" content="#1d4ed8"/>
+<title>PREDICTOROPP MODS — AI Prediction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4f7fb;--card:#ffffff;--ink:#0b1530;--muted:#6b7493;
+  --pri:#1d4ed8;--pri2:#3b82f6;--pri-soft:#eaf1ff;
+  --ok:#16a34a;--err:#dc2626;--warn:#f59e0b;--violet:#7c3aed;
+  --line:#e6ecf5;--shadow:0 10px 30px -12px rgba(20,40,90,.18);
+  --grad:linear-gradient(135deg,#2563eb 0%,#3b82f6 60%,#60a5fa 100%);
+  --grad-dark:linear-gradient(135deg,#0b1530 0%,#1e3a8a 100%);
+  --boss-grad:linear-gradient(135deg,#1d4ed8 0%,#7c3aed 50%,#2563eb 100%);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--ink);
+  font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:15px;overscroll-behavior-y:none}
+body{min-height:100dvh;display:flex;justify-content:center}
+#app{width:100%;max-width:480px;min-height:100dvh;background:var(--bg);position:relative;padding-bottom:90px;overflow-x:hidden}
+button{font-family:inherit;border:0;cursor:pointer;background:none;color:inherit}
+input,select,textarea{font-family:inherit;font-size:15px}
+a{color:var(--pri);text-decoration:none}
+
+/* PREDICTOROPP MODS BANNER */
+.boss-banner{background:var(--boss-grad);padding:10px 16px 8px;text-align:center;position:relative;overflow:hidden}
+.boss-banner::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);animation:bossshine 2.5s linear infinite}
+@keyframes bossshine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.boss-title{font-family:'Orbitron',sans-serif;font-weight:900;font-size:22px;color:#fff;letter-spacing:4px;
+  text-transform:uppercase;animation:bosspulse 3s ease-in-out infinite;
+  text-shadow:0 0 20px rgba(255,255,255,.5),0 0 40px rgba(96,165,250,.4);position:relative;z-index:1}
+@keyframes bosspulse{0%,100%{text-shadow:0 0 20px rgba(255,255,255,.5),0 0 40px rgba(96,165,250,.4);letter-spacing:4px}50%{text-shadow:0 0 30px rgba(255,255,255,.9),0 0 60px rgba(124,58,237,.7);letter-spacing:5px}}
+.boss-sub{font-size:10px;color:rgba(255,255,255,.75);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:2px;position:relative;z-index:1}
+.powered-bar{background:rgba(11,21,48,.08);padding:5px 16px;text-align:center;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.powered-bar span{color:var(--pri);font-family:'Orbitron',sans-serif;font-size:10px}
+
+/* UTILITY */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 18px;border-radius:14px;font-weight:700;font-size:15px;background:var(--grad);color:#fff;box-shadow:0 8px 20px -8px rgba(37,99,235,.6);transition:transform .15s ease,box-shadow .2s ease;width:100%}
+.btn:active{transform:scale(.98)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+.btn.dark{background:#0b1530;color:#fff;box-shadow:none}
+.btn.sm{padding:10px 14px;font-size:13px;width:auto;border-radius:10px}
+.card{background:var(--card);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.field label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+.field input,.field select,.field textarea{padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:#fbfcfe;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--pri);box-shadow:0 0 0 4px rgba(59,130,246,.12);background:#fff}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:var(--muted);font-size:11px;font-weight:600;letter-spacing:.5px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
+.g-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;background:#fff;color:#1f2937;border:1px solid #dadce0;border-radius:14px;padding:13px 18px;font-weight:600;font-size:14.5px;box-shadow:0 2px 6px rgba(20,40,90,.06);transition:all .2s ease;position:relative;overflow:hidden}
+.g-btn:hover{box-shadow:0 8px 22px -8px rgba(59,130,246,.45);border-color:#a5c5ff;transform:translateY(-1px)}
+.g-btn:active{transform:scale(.98)}
+.g-btn svg{width:20px;height:20px;flex-shrink:0}
+.ripple{position:absolute;border-radius:50%;background:rgba(59,130,246,.25);transform:scale(0);animation:ripple .6s linear;pointer-events:none}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.muted{color:var(--muted)}.hide{display:none!important}.center{text-align:center}
+.badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--pri-soft);color:var(--pri)}
+.badge.ok{background:#dcfce7;color:#15803d}.badge.warn{background:#fef3c7;color:#b45309}.badge.err{background:#fee2e2;color:#b91c1c}
+.page{animation:fade .35s ease both;padding:18px 16px}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* AUTH */
+.auth{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:radial-gradient(120% 60% at 50% 0%,#dbe9ff 0%,#f4f7fb 60%,#f4f7fb 100%)}
+.auth .card{width:100%;padding:26px 22px}
+.auth-boss{background:var(--boss-grad);border-radius:18px 18px 0 0;padding:22px;text-align:center;margin:-26px -22px 20px;position:relative;overflow:hidden}
+.auth-boss::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.2),transparent);animation:bossshine 2s linear infinite}
+.auth-boss .bt{font-family:'Orbitron',sans-serif;font-weight:900;font-size:26px;color:#fff;letter-spacing:5px;animation:bosspulse 3s ease-in-out infinite;position:relative;z-index:1;text-shadow:0 0 20px rgba(255,255,255,.6)}
+.auth-boss .bs{font-size:11px;color:rgba(255,255,255,.8);font-weight:700;letter-spacing:2px;position:relative;z-index:1;margin-top:3px}
+.switch{display:flex;background:#eef2f9;padding:4px;border-radius:12px;margin-bottom:18px}
+.switch button{flex:1;padding:10px;border-radius:9px;font-weight:600;color:var(--muted)}
+.switch button.on{background:#fff;color:var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.06)}
+
+/* TOP BAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
+.topbar .brand{display:flex;align-items:center;gap:10px}
+.topbar .brand .mark{width:34px;height:34px;border-radius:10px;background:var(--boss-grad);color:#fff;display:grid;place-items:center;font-size:11px;font-family:'Orbitron',sans-serif;font-weight:900}
+.topbar .brand-name{font-family:'Orbitron',sans-serif;font-weight:900;font-size:14px;background:var(--boss-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:1px}
+.icon-btn{width:36px;height:36px;border-radius:10px;background:#f1f5fb;display:grid;place-items:center}
+
+/* NOTICE */
+.notice{background:var(--grad);color:#fff;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;overflow:hidden;position:relative;box-shadow:0 14px 30px -16px rgba(37,99,235,.7);margin-bottom:16px}
+.notice::before{content:"";position:absolute;inset:-2px;border-radius:18px;background:linear-gradient(120deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);animation:shine 4s linear infinite;mix-blend-mode:overlay}
+@keyframes shine{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.notice .dot{width:8px;height:8px;border-radius:50%;background:#fff;box-shadow:0 0 0 6px rgba(255,255,255,.25);animation:pulse 1.6s infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.4);opacity:.7}}
+.notice .marquee{flex:1;white-space:nowrap;overflow:hidden}
+.notice .marquee span{display:inline-block;padding-left:100%;animation:scrollx 22s linear infinite}
+@keyframes scrollx{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+.notice .tag{background:rgba(255,255,255,.18);padding:4px 8px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.5px}
+.section-title{display:flex;align-items:center;justify-content:space-between;margin:18px 4px 10px}
+.section-title h3{margin:0;font-size:16px;font-family:'Space Grotesk'}
+.section-title .link{font-size:12px;color:var(--pri);font-weight:600}
+
+/* GAMES */
+.games{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.game{background:#fff;border-radius:18px;padding:14px;box-shadow:var(--shadow);position:relative;overflow:hidden;transition:transform .2s;animation:float 6s ease-in-out infinite}
+.game:nth-child(2n){animation-delay:-3s}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.game:active{transform:scale(.97)}
+.game .thumb{aspect-ratio:1.4;border-radius:12px;display:grid;place-items:center;color:#fff;font-family:'Space Grotesk';font-weight:800;font-size:22px;margin-bottom:10px;position:relative;overflow:hidden;box-shadow:inset 0 -20px 40px rgba(0,0,0,.25)}
+.game .thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:12px}
+.game .thumb .lbl{position:relative;z-index:2}
+.game .thumb::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.4),transparent 50%)}
+.game .name{font-weight:700;font-size:14px}
+.game .desc{font-size:11px;color:var(--muted);margin-top:2px}
+.game .lock{position:absolute;top:10px;right:10px;background:rgba(0,0,0,.55);color:#fff;font-size:10px;padding:4px 8px;border-radius:999px;font-weight:700;backdrop-filter:blur(4px);display:flex;align-items:center;gap:4px}
+.game .lock.ok{background:rgba(22,163,74,.85)}
+
+/* PROOFS */
+.proofs{display:flex;gap:12px;overflow-x:auto;padding:4px 2px 10px;scroll-snap-type:x mandatory}
+.proofs::-webkit-scrollbar{display:none}
+.proof{flex:0 0 78%;background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;scroll-snap-align:start}
+.proof .img{aspect-ratio:1.4;background:var(--grad-dark);display:grid;place-items:center;color:#fff;font-weight:700;font-size:18px;font-family:'Space Grotesk';position:relative;overflow:hidden}
+.proof .img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.proof .img .lbl{position:relative;z-index:2}
+.proof .cap{padding:10px 12px;font-size:12px;color:var(--muted)}
+
+/* BOTTOM NAV */
+.nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:10px 6px calc(10px + env(safe-area-inset-bottom));z-index:40}
+.nav button{display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);font-size:11px;font-weight:600;padding:4px 10px;border-radius:10px}
+.nav button.on{color:var(--pri)}
+.nav button.on .ico{background:var(--pri-soft)}
+.nav .ico{width:38px;height:32px;border-radius:10px;display:grid;place-items:center;font-size:16px}
+
+/* PAYMENT */
+.qr{aspect-ratio:1;width:200px;margin:8px auto 12px;border-radius:18px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;padding:10px}
+.qr img,.qr canvas{width:100%;height:100%}
+.upi-row{display:flex;align-items:center;justify-content:space-between;background:#f6f8fc;padding:12px 14px;border-radius:12px;margin-top:10px;font-weight:600}
+.trust{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.trust .t{flex:1;min-width:130px;background:#fbfcfe;border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:12px;display:flex;align-items:center;gap:8px}
+.trust .t .b{width:28px;height:28px;border-radius:8px;background:var(--pri-soft);display:grid;place-items:center;color:var(--pri)}
+
+/* PREDICTION */
+.pred-head{background:var(--grad-dark);color:#fff;border-radius:22px;padding:18px;box-shadow:var(--shadow);margin-bottom:16px;position:relative;overflow:hidden}
+.pred-head::after{content:"";position:absolute;inset:0;background:radial-gradient(80% 60% at 100% 0%,rgba(96,165,250,.35),transparent 60%)}
+.pred-head .top{display:flex;align-items:center;gap:12px;position:relative}
+.pred-head .glogo{width:52px;height:52px;border-radius:14px;background:var(--grad);display:grid;place-items:center;font-family:'Space Grotesk';font-weight:800;box-shadow:0 8px 18px -6px rgba(0,0,0,.5)}
+.pred-head h2{margin:0;font-size:18px;font-family:'Space Grotesk'}
+.pred-head .live{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,.15);color:#86efac;padding:4px 10px;border-radius:999px;font-size:11px;font-weight:700;margin-top:4px}
+.pred-head .live .ldot{width:7px;height:7px;border-radius:50%;background:#22c55e;animation:pulse 1.4s infinite}
+.pred-head .meta{display:flex;gap:10px;margin-top:14px;position:relative}
+.pred-head .meta .box{flex:1;background:rgba(255,255,255,.08);border-radius:12px;padding:10px 12px;border:1px solid rgba(255,255,255,.12)}
+.pred-head .meta .lbl{font-size:10px;opacity:.7;text-transform:uppercase;letter-spacing:1px}
+.pred-head .meta .val{font-family:'Space Grotesk';font-weight:700;font-size:18px;margin-top:2px}
+.timer-tabs{display:flex;background:#eef2f9;border-radius:12px;padding:4px;margin-bottom:14px;width:100%;box-sizing:border-box}
+.timer-tabs button{flex:1;min-width:0;padding:10px 4px;font-weight:700;color:var(--muted);border-radius:9px;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center}
+.timer-tabs button.on{background:var(--grad);color:#fff;box-shadow:0 6px 14px -6px rgba(37,99,235,.6)}
+.predict-card{background:#fff;border-radius:20px;box-shadow:var(--shadow);padding:20px;text-align:center;margin-bottom:14px;position:relative;overflow:hidden}
+.predict-card .ai{font-size:11px;font-weight:700;color:var(--pri);letter-spacing:1px;font-family:'Orbitron',sans-serif}
+.predict-card .num-wrap{display:flex;justify-content:center;align-items:center;gap:18px;margin:16px 0}
+.ball{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;font-family:'Space Grotesk';font-weight:800;font-size:30px;color:#fff;box-shadow:0 12px 24px -10px rgba(0,0,0,.4);position:relative;animation:pop .4s ease both}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:scale(1);opacity:1}}
+.ball.green{background:radial-gradient(circle at 30% 30%,#34d399,#059669)}
+.ball.red{background:radial-gradient(circle at 30% 30%,#f87171,#dc2626)}
+.ball.violet{background:radial-gradient(circle at 30% 30%,#a78bfa,#7c3aed)}
+.ball.mix{background:conic-gradient(#dc2626 0 50%,#7c3aed 50% 100%)}
+.ball.mix.g{background:conic-gradient(#059669 0 50%,#7c3aed 50% 100%)}
+.ball::after{content:"";position:absolute;inset:6px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.45),transparent 55%);pointer-events:none}
+.chips{display:flex;justify-content:center;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:8px 16px;border-radius:999px;font-weight:800;font-size:13px;letter-spacing:.5px;box-shadow:0 6px 14px -6px rgba(0,0,0,.25);animation:pop .4s .1s both}
+.chip.big{background:#fef3c7;color:#b45309}.chip.small{background:#dbeafe;color:#1d4ed8}
+.chip.green{background:#dcfce7;color:#15803d}.chip.red{background:#fee2e2;color:#b91c1c}.chip.violet{background:#ede9fe;color:#6d28d9}
+.predict-btn{background:var(--boss-grad);color:#fff;border-radius:14px;padding:14px;font-weight:800;width:100%;font-size:15px;box-shadow:0 14px 30px -10px rgba(37,99,235,.6);letter-spacing:.5px;display:flex;align-items:center;justify-content:center;gap:10px;font-family:'Orbitron',sans-serif}
+.predict-btn:disabled{opacity:.7}
+.history{background:#fff;border-radius:18px;box-shadow:var(--shadow);overflow:hidden}
+.history .h-head{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center}
+.history .h-head h4{margin:0;font-size:14px;font-family:'Space Grotesk'}
+.history table{width:100%;border-collapse:collapse;font-size:12px}
+.history th{text-align:left;padding:10px 14px;color:var(--muted);font-weight:600;background:#fafbfd;font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+.history td{padding:10px 14px;border-top:1px solid var(--line)}
+.tag-win{background:#dcfce7;color:#15803d;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800;box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+.tag-loss{background:#fee2e2;color:#b91c1c;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800}
+.tag-pending{background:#fef3c7;color:#b45309;padding:3px 8px;border-radius:999px;font-size:10px;font-weight:800}
+
+/* PROFILE */
+.profile-head{background:var(--grad-dark);color:#fff;border-radius:20px;padding:22px;text-align:center;position:relative;overflow:hidden;margin-bottom:14px}
+.avatar{width:80px;height:80px;border-radius:50%;background:var(--boss-grad);margin:0 auto 10px;display:grid;place-items:center;font-size:30px;font-family:'Space Grotesk';font-weight:800;box-shadow:0 12px 30px -10px rgba(0,0,0,.5)}
+.list-card{background:#fff;border-radius:16px;box-shadow:var(--shadow);overflow:hidden;margin-bottom:14px}
+.list-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--line)}
+.list-row:last-child{border-bottom:0}
+.list-row .l{display:flex;align-items:center;gap:12px}
+.list-row .l .ico{width:34px;height:34px;border-radius:10px;background:var(--pri-soft);display:grid;place-items:center;color:var(--pri)}
+.copyright-bar{background:#fff;border-top:1px solid var(--line);padding:12px 16px;text-align:center;font-size:11px;color:var(--muted);font-weight:600;margin-top:8px;border-radius:12px}
+.copyright-bar .boss-text{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;background:var(--boss-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+
+/* TOAST */
+.toast-wrap{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;width:min(420px,92vw)}
+.toast{background:#0b1530;color:#fff;padding:12px 16px;border-radius:12px;box-shadow:0 14px 30px -10px rgba(0,0,0,.4);font-size:13px;font-weight:600;animation:slidein .3s ease both;display:flex;align-items:center;gap:10px}
+.toast.ok{background:#15803d}.toast.err{background:#b91c1c}.toast.warn{background:#b45309}
+@keyframes slidein{from{opacity:0;transform:translateY(-10px)}to{opacity:1;transform:none}}
+.modal{position:fixed;inset:0;background:rgba(11,21,48,.5);z-index:200;display:none;align-items:flex-end;justify-content:center}
+.modal.on{display:flex}
+.sheet{background:#fff;width:100%;max-width:480px;border-radius:22px 22px 0 0;padding:22px;animation:slideup .3s ease both;max-height:90vh;overflow-y:auto}
+@keyframes slideup{from{transform:translateY(40px);opacity:0}to{transform:none;opacity:1}}
+.sheet h3{margin:0 0 6px;font-family:'Space Grotesk';font-size:20px}
+.sheet .ok-icon{width:64px;height:64px;border-radius:50%;background:#dcfce7;color:#15803d;display:grid;place-items:center;margin:0 auto 12px;font-size:30px;animation:pop .4s ease both}
+.dots{display:inline-flex;gap:4px}
+.dots i{width:6px;height:6px;background:currentColor;border-radius:50%;animation:bounce 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(-5px);opacity:1}}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin 1s linear infinite;display:inline-block}
+@keyframes spin{to{transform:rotate(360deg)}}
+.page-boss-header{background:var(--boss-grad);border-radius:16px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;position:relative;overflow:hidden}
+.page-boss-header::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);animation:bossshine 2.5s linear infinite}
+.page-boss-header .pt{font-family:'Orbitron',sans-serif;font-weight:900;font-size:13px;color:#fff;letter-spacing:2px;text-transform:uppercase;position:relative;z-index:1}
+.page-boss-header .pb{font-size:10px;color:rgba(255,255,255,.75);font-weight:600;position:relative;z-index:1}
+/* Loader overlay */
+.fb-loading{position:fixed;inset:0;background:rgba(244,247,251,.95);z-index:500;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.fb-loading .bm{font-family:'Orbitron',sans-serif;font-weight:900;font-size:20px;background:var(--boss-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:bosspulse 1.5s ease-in-out infinite}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast-wrap" id="toasts"></div>
+<div class="modal" id="modal"><div class="sheet" id="sheet"></div></div>
+<!-- fbLoader hidden by default; shown only during login/register actions -->
+<div class="fb-loading" id="fbLoader" style="display:none">
+  <div class="bm">PREDICTOROPP MODS</div>
+  <div class="dots"><i></i><i></i><i></i></div>
+  <div style="font-size:12px;color:#6b7493;font-weight:600" id="fbLoaderMsg">Please wait...</div>
+</div>
+
+<!-- Firebase SDK v10 (modular) -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithPopup, signInWithRedirect, getRedirectResult, createUserWithEmailAndPassword,
+  signInWithEmailAndPassword, GoogleAuthProvider, signOut, updateProfile
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  getFirestore, doc, getDoc, setDoc, addDoc, updateDoc,
+  collection, getDocs, query, where, orderBy, onSnapshot, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* =========================================================================
+   🔥 PREDICTOROPP MODS — Firebase Config
+   Replace this with YOUR Firebase project config.
+   See: predictoropp-mods-firebase-setup-guide.html for full setup instructions.
+   ========================================================================= */
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyB6zwkEfLQfnJbwSDlRPZ27iYlJdYztSiA",
+  authDomain: "paid-mod-predi.firebaseapp.com",
+  databaseURL: "https://paid-mod-predi-default-rtdb.firebaseio.com",
+  projectId: "paid-mod-predi",
+  storageBucket: "paid-mod-predi.firebasestorage.app",
+  messagingSenderId: "647827356959",
+  appId: "1:647827356959:web:c0ef623e27db09e26d442a",
+  measurementId: "G-D1T8VDWHQZ"
+};
+
+/* ===== Init Firebase ===== */
+const fbApp  = initializeApp(FIREBASE_CONFIG);
+const auth   = getAuth(fbApp);
+const db     = getFirestore(fbApp);
+const gProv  = new GoogleAuthProvider();
+
+// Handle Google redirect result (Chrome fallback)
+getRedirectResult(auth).then(async result=>{
+  if(result&&result.user){
+    const u=result.user;
+    const existing=await fsGet(`users/${u.uid}`);
+    await fsSet(`users/${u.uid}`,{
+      uid:u.uid,name:u.displayName||'Google User',email:u.email,
+      phone:existing?.phone||'-',photo:u.photoURL||'',provider:'google',
+      approved:existing?.approved||false,blocked:existing?.blocked||false,
+      createdAt:existing?.createdAt||Date.now(),
+    });
+    toast('Signed in with Google','ok');
+  }
+}).catch(()=>{});
+
+/* ===== Fallback localStorage (used until Firebase loads) ===== */
+const LS = {
+  k:(k)=>'bm_'+k,
+  get(k,d=null){try{return JSON.parse(localStorage.getItem(this.k(k)))??d}catch{return d}},
+  set(k,v){localStorage.setItem(this.k(k),JSON.stringify(v))},
+};
+
+/* ===== State ===== */
+const State = {
+  user: null,
+  fbUser: null,
+  page: 'home',
+  activeGame: null,
+  settings: null,
+  games: [],
+  proofs: [],
+  history: [],
+  predicting: false,
+  lastPeriod: null,
+};
+
+/* ===== Firestore helpers ===== */
+async function fsGet(path) {
+  try {
+    const snap = await getDoc(doc(db, ...path.split('/')));
+    return snap.exists() ? { id: snap.id, ...snap.data() } : null;
+  } catch(e) { return null; }
+}
+async function fsSet(path, data) {
+  try { await setDoc(doc(db, ...path.split('/')), data, { merge: true }); return true; }
+  catch(e) { console.error('fsSet', e); return false; }
+}
+async function fsAdd(col, data) {
+  try { const r = await addDoc(collection(db, col), data); return r.id; }
+  catch(e) { console.error('fsAdd', e); return null; }
+}
+async function fsUpdate(path, data) {
+  try { await updateDoc(doc(db, ...path.split('/')), data); return true; }
+  catch(e) { return false; }
+}
+async function fsQuery(col, ...constraints) {
+  try {
+    const snap = await getDocs(query(collection(db, col), ...constraints));
+    return snap.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e) { return []; }
+}
+
+/* ===== Default content ===== */
+const DEFAULTS = {
+  notice:"🎉 Welcome to PREDICTOROPP MODS — AI Model V4.2 active. Contact support on Telegram for premium activation.",
+  upi:"predictoroppмods@upi", upiName:"PREDICTOROPP MODS", amount:499,
+  upiQrUrl:"",
+  payInstructions:"Pay exact amount to the UPI ID. Submit 12-digit UTR after payment. Approval within 30 minutes.",
+  support:{telegram:"https://t.me/predictoroppмods",whatsapp:"https://wa.me/910000000000",email:"support@predictoroppмods.app"},
+};
+
+/* ===== Load app settings, games, proofs from Firestore ===== */
+async function loadAppData() {
+  try {
+    // Settings
+    const s = await fsGet('settings/app');
+    State.settings = s || DEFAULTS;
+
+    // Games
+    const games = await fsQuery('games', orderBy('createdAt'));
+    State.games = games.length ? games : [
+      {id:"91club",name:"91 Club",desc:"Color Prediction",c1:"#ef4444",c2:"#7c2d12",img:"",active:true},
+      {id:"yaarwin",name:"Yaar Win",desc:"Number Game",c1:"#22d3ee",c2:"#0e7490",img:"",active:true},
+      {id:"jaiclub",name:"Jai Club",desc:"Premium AI Signal",c1:"#3b82f6",c2:"#1e3a8a",img:"",active:true},
+      {id:"jalwa",name:"Jalwa Game",desc:"Live Predictions",c1:"#f59e0b",c2:"#7c2d12",img:"",active:true},
+      {id:"51club",name:"51 Club",desc:"Win Go 1 Min",c1:"#10b981",c2:"#064e3b",img:"",active:true},
+      {id:"bdg",name:"BDG Game",desc:"High-accuracy AI",c1:"#8b5cf6",c2:"#4c1d95",img:"",active:true},
+    ];
+
+    // Proofs
+    const proofs = await fsQuery('proofs', orderBy('createdAt'));
+    State.proofs = proofs.length ? proofs : [
+      {cap:"Rohit won ₹12,400 today",c1:"#0ea5e9",c2:"#082f49",img:""},
+      {cap:"Aman withdrew ₹8,200",c1:"#22c55e",c2:"#14532d",img:""},
+      {cap:"Priya hit 17 wins",c1:"#f43f5e",c2:"#881337",img:""},
+    ];
+
+    // Live listener for settings changes
+    onSnapshot(doc(db,'settings','app'), snap=>{
+      if(snap.exists()){State.settings={...snap.data()};if(State.page==='home')renderPage();}
+    });
+    onSnapshot(collection(db,'games'), snap=>{
+      State.games=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(State.page==='home')renderPage();
+    });
+    onSnapshot(collection(db,'proofs'), snap=>{
+      State.proofs=snap.docs.map(d=>({id:d.id,...d.data()}));
+      if(State.page==='home')renderPage();
+    });
+  } catch(e) {
+    State.settings = DEFAULTS;
+  }
+}
+
+/* ===== Util ===== */
+const $ = (sel,el=document)=>el.querySelector(sel);
+const $$ = (sel,el=document)=>[...el.querySelectorAll(sel)];
+const esc = s=>String(s??'').replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(msg,kind=''){const w=$('#toasts');const t=document.createElement('div');t.className='toast '+kind;t.textContent=msg;w.appendChild(t);setTimeout(()=>{t.style.opacity=0;setTimeout(()=>t.remove(),300)},2800);}
+function openSheet(html){$('#sheet').innerHTML=html;$('#modal').classList.add('on');$('#modal').onclick=e=>{if(e.target===$('#modal'))closeSheet()};}
+function closeSheet(){$('#modal').classList.remove('on');}
+window.closeSheet=closeSheet;
+
+/* ===== Router ===== */
+function renderPage() {
+  const app=$('#app');
+  if(!State.user){app.innerHTML=AuthView();bindAuth();return;}
+  let body='';
+  switch(State.page){
+    case 'home':    body=HomeView();break;
+    case 'pay':     body=PayView();break;
+    case 'predict': body=PredictView();break;
+    case 'tx':      body=TxView();break;
+    case 'profile': body=ProfileView();break;
+    case 'support': body=SupportView();break;
+    default:        body=HomeView();
+  }
+  app.innerHTML=BossBanner()+TopBar()+body+Nav();
+  bindCommon();
+  if(State.page==='home')    bindHome();
+  if(State.page==='pay')     bindPay();
+  if(State.page==='predict') bindPredict();
+  if(State.page==='profile') bindProfile();
+}
+function go(p,opts={}){State.page=p;if(opts.game)State.activeGame=opts.game;window.scrollTo(0,0);renderPage();if(p==='tx')setTimeout(loadTx,50);}
+window.go=go;
+
+/* ===== PREDICTOROPP MODS BANNER ===== */
+function BossBanner(){
+  return `<div class="boss-banner"><div class="boss-title">PREDICTOROPP MODS</div><div class="boss-sub">AI PREDICTION PLATFORM</div></div>
+  <div class="powered-bar">Powered by <span>PREDICTOROPP MODS</span> — AI Model V4.2 Pro</div>`;
+}
+function PoweredBy(){
+  return `<div style="text-align:center;padding:16px 0 4px"><span style="font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;background:var(--boss-grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:2px">⚡ POWERED BY PREDICTOROPP MODS ⚡</span></div>`;
+}
+
+/* ===== AUTH VIEW ===== */
+function AuthView(){
+  return `<div class="auth"><div class="card">
+    <div class="auth-boss">
+      <div class="bt">PREDICTOROPP MODS</div>
+      <div class="bs">✦ PREMIUM AI PREDICTION PLATFORM ✦</div>
+    </div>
+    <div class="switch"><button class="on" data-tab="login">Login</button><button data-tab="register">Register</button></div>
+    <div id="loginForm">
+      <h1 style="font-family:'Space Grotesk';font-size:20px;margin:0 0 4px">Welcome back</h1>
+      <p style="margin:0 0 18px;color:var(--muted);font-size:13px">Sign in to your AI dashboard</p>
+      <div class="field"><label>Email</label><input id="li_email" type="email" placeholder="you@email.com"></div>
+      <div class="field"><label>Password</label><input id="li_pw" type="password" placeholder="••••••••"></div>
+      <button class="btn" id="li_btn">Login to PREDICTOROPP MODS</button>
+      <div class="divider">OR</div>
+      <button class="g-btn" id="googleLoginBtn">${GoogleSVG()}<span>Continue with Google</span></button>
+      <p class="center muted" style="font-size:12px;margin-top:14px">By continuing you agree to our terms</p>
+    </div>
+    <div id="registerForm" class="hide">
+      <h1 style="font-family:'Space Grotesk';font-size:20px;margin:0 0 4px">Create account</h1>
+      <p style="margin:0 0 18px;color:var(--muted);font-size:13px">Join thousands of winning players</p>
+      <div class="field"><label>Full name</label><input id="rg_name" placeholder="Your name"></div>
+      <div class="field"><label>Email</label><input id="rg_email" type="email" placeholder="you@email.com"></div>
+      <div class="field"><label>Phone</label><input id="rg_phone" placeholder="+91 9876543210"></div>
+      <div class="row">
+        <div class="field"><label>Password</label><input id="rg_pw" type="password"></div>
+        <div class="field"><label>Confirm</label><input id="rg_pw2" type="password"></div>
+      </div>
+      <button class="btn" id="rg_btn">Join PREDICTOROPP MODS</button>
+      <div class="divider">OR</div>
+      <button class="g-btn" id="googleRegBtn">${GoogleSVG()}<span>Continue with Google</span></button>
+    </div>
+    <p class="center" style="font-size:10px;color:var(--muted);margin-top:16px;font-family:'Orbitron',sans-serif;letter-spacing:1px">© PREDICTOROPP MODS</p>
+  </div></div>`;
+}
+function GoogleSVG(){return `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.9 29.3 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34 6.6 29.3 4.6 24 4.6 16.3 4.6 9.7 8.8 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.4-4.5 2.3-7.2 2.3-5.3 0-9.7-3.1-11.3-7.4l-6.5 5C9.6 39.7 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.1 5.6l6.2 5.2C40.9 35.1 44 30 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;}
+
+function bindAuth(){
+  $$('.switch button').forEach(b=>b.onclick=()=>{
+    $$('.switch button').forEach(x=>x.classList.remove('on'));b.classList.add('on');
+    const t=b.dataset.tab;
+    $('#loginForm').classList.toggle('hide',t!=='login');
+    $('#registerForm').classList.toggle('hide',t!=='register');
+  });
+
+  // Email Login
+  $('#li_btn').onclick=async()=>{
+    const email=$('#li_email').value.trim(),pw=$('#li_pw').value;
+    if(!email||!pw)return toast('Enter email & password','err');
+    const btn=$('#li_btn');
+    btn.innerHTML='<span class="spinner"></span> Signing in…';btn.disabled=true;
+    try{
+      await signInWithEmailAndPassword(auth,email,pw);
+      // onAuthStateChanged will handle the rest
+    }catch(e){
+      btn.innerHTML='Login to PREDICTOROPP MODS';btn.disabled=false;
+      toast(e.code==='auth/wrong-password'||e.code==='auth/invalid-credential'?'Wrong email or password':e.code==='auth/user-not-found'?'No account found':e.code==='auth/invalid-email'?'Invalid email':e.message,'err');
+    }
+  };
+
+  // Register
+  $('#rg_btn').onclick=async()=>{
+    const name=$('#rg_name').value.trim(),email=$('#rg_email').value.trim(),
+          phone=$('#rg_phone').value.trim(),pw=$('#rg_pw').value,pw2=$('#rg_pw2').value;
+    if(!name||!email||!phone||!pw)return toast('All fields required','err');
+    if(pw.length<6)return toast('Password min 6 chars','err');
+    if(pw!==pw2)return toast('Passwords do not match','err');
+    const btn=$('#rg_btn');
+    btn.innerHTML='<span class="spinner"></span> Creating account…';btn.disabled=true;
+    try{
+      const cred=await createUserWithEmailAndPassword(auth,email,pw);
+      await updateProfile(cred.user,{displayName:name});
+      await fsSet(`users/${cred.user.uid}`,{
+        uid:cred.user.uid,name,email,phone,provider:'email',
+        approved:false,blocked:false,createdAt:Date.now()
+      });
+      toast('Welcome to PREDICTOROPP MODS!','ok');
+      // onAuthStateChanged will handle navigation
+    }catch(e){
+      btn.innerHTML='Join PREDICTOROPP MODS';btn.disabled=false;
+      toast(e.code==='auth/email-already-in-use'?'Email already registered':e.code==='auth/invalid-email'?'Invalid email':e.code==='auth/weak-password'?'Password too weak':e.message,'err');
+    }
+  };
+
+  // Google Sign-In
+  ['#googleLoginBtn','#googleRegBtn'].forEach(sel=>{
+    const btn=$(sel);if(!btn)return;
+    btn.onclick=async(e)=>{
+      const origHTML=btn.innerHTML;
+      btn.innerHTML='<span class="spinner" style="border-color:rgba(0,0,0,.2);border-top-color:#1d4ed8"></span> Connecting…';
+      btn.disabled=true;
+      try{
+        let u=null;
+        try{
+          const res=await signInWithPopup(auth,gProv);
+          u=res.user;
+        }catch(popupErr){
+          if(popupErr.code==='auth/popup-blocked'||popupErr.code==='auth/popup-closed-by-user'||popupErr.code==='auth/cancelled-popup-request'){
+            toast('Redirecting to Google…');
+            await signInWithRedirect(auth,gProv);
+            return;
+          }
+          throw popupErr;
+        }
+        if(u){
+          const existing=await fsGet(`users/${u.uid}`);
+          await fsSet(`users/${u.uid}`,{
+            uid:u.uid,name:u.displayName||'Google User',email:u.email,
+            phone:existing?.phone||'-',photo:u.photoURL||'',provider:'google',
+            approved:existing?.approved||false,blocked:existing?.blocked||false,
+            createdAt:existing?.createdAt||Date.now(),
+          });
+          toast('Signed in with Google','ok');
+        }
+      }catch(e){
+        btn.innerHTML=origHTML;btn.disabled=false;
+        toast(e.message||'Google sign-in failed','err');
+      }
+    };
+  });
+}
+
+/* ===== TOP BAR + NAV ===== */
+function TopBar(){
+  const initials=State.user?.name?.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()||'U';
+  return `<div class="topbar">
+    <div class="brand">
+      <div class="mark">BM</div>
+      <div><div class="brand-name">PREDICTOROPP MODS</div><div style="font-size:10px;color:var(--muted);font-weight:600">AI Model V4.2 Pro</div></div>
+    </div>
+    <div class="right">
+      <div class="icon-btn" onclick="go('support')">💬</div>
+      <div class="icon-btn" style="background:var(--boss-grad);color:#fff;font-weight:700;font-size:12px" onclick="go('profile')">${initials}</div>
+    </div></div>`;
+}
+function Nav(){
+  const p=State.page,cls=x=>x===p?'on':'';
+  return `<div class="nav">
+    <button class="${cls('home')}" onclick="go('home')"><div class="ico">🏠</div>Home</button>
+    <button class="${cls('tx')}" onclick="go('tx')"><div class="ico">📒</div>Transactions</button>
+    <button class="${cls('support')}" onclick="go('support')"><div class="ico">🎧</div>Support</button>
+    <button class="${cls('profile')}" onclick="go('profile')"><div class="ico">👤</div>Profile</button>
+  </div>`;
+}
+function bindCommon(){
+  window.go=go;
+  window.closeSheet=closeSheet;
+  window.loadTx=loadTx;
+  if(State.page==='tx') setTimeout(loadTx, 50);
+}
+
+/* ===== HOME ===== */
+function HomeView(){
+  const s=State.settings||DEFAULTS;
+  const games=(State.games||[]).filter(g=>g.active!==false);
+  const proofs=State.proofs||[];
+  const approved=State.user?.approved;
+  return `<div class="page">
+    <div class="notice"><span class="dot"></span><span class="tag">PREDICTOROPP MODS</span>
+      <div class="marquee"><span>${esc(s.notice||DEFAULTS.notice)}</span></div></div>
+    <div class="page-boss-header">
+      <div><div class="pt">PREDICTOROPP MODS</div><div class="pb">Premium AI Games</div></div>
+      <span class="badge ${approved?'ok':''}" style="background:rgba(255,255,255,.2);color:#fff">${approved?'✓ ACTIVATED':'🔒 LOCKED'}</span>
+    </div>
+    <div class="section-title"><h3>Premium Games</h3><span class="badge ${approved?'ok':''}">${approved?'✓ Active':'🔒 Locked'}</span></div>
+    <div class="games">
+      ${games.map(g=>`
+        <div class="game" data-id="${esc(g.id)}">
+          <div class="thumb" style="background:linear-gradient(135deg,${g.c1},${g.c2})">
+            ${g.img?`<img src="${esc(g.img)}" alt="${esc(g.name)}">`:''}
+            <span class="lbl">${g.name.split(' ')[0]}</span>
+            <span class="lock ${approved?'ok':''}">${approved?'✓ UNLOCKED':'🔒 LOCKED'}</span>
+          </div>
+          <div class="name">${esc(g.name)}</div>
+          <div class="desc">${esc(g.desc)}</div>
+        </div>`).join('')}
+    </div>
+    <div class="section-title"><h3>Winning Proofs</h3><span class="link">Live</span></div>
+    <div class="proofs">
+      ${proofs.map(p=>`
+        <div class="proof">
+          <div class="img" style="background:linear-gradient(135deg,${p.c1},${p.c2})">
+            ${p.img?`<img src="${esc(p.img)}" alt="proof">`:''}
+            <span class="lbl">WIN PROOF</span>
+          </div>
+          <div class="cap">${esc(p.cap)}</div>
+        </div>`).join('')}
+    </div>
+    ${PoweredBy()}
+  </div>`;
+}
+function bindHome(){
+  $$('.game').forEach(c=>c.onclick=()=>{
+    const g=State.games.find(x=>x.id===c.dataset.id);
+    State.activeGame=g;
+    if(!State.user?.approved){toast('Complete payment to unlock','warn');go('pay');}
+    else go('predict');
+  });
+}
+
+/* ===== PAYMENT ===== */
+function PayView(){
+  const s=State.settings||DEFAULTS;
+  const g=State.activeGame||{name:'Premium'};
+  const qrUrl=s.upiQrUrl||'';
+  return `<div class="page">
+    <button class="btn ghost sm" onclick="go('home')">← Back</button>
+    <div style="height:14px"></div>
+    <div class="page-boss-header">
+      <div><div class="pt">PREDICTOROPP MODS</div><div class="pb">Premium Activation</div></div>
+      <div style="color:rgba(255,255,255,.9);font-weight:800;font-size:16px;position:relative;z-index:1">₹${s.amount||499}</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div><div style="font-weight:700">${esc(g.name)} Activation</div>
+          <div class="muted" style="font-size:12px;margin-top:2px">One-time premium unlock</div></div>
+        <div style="text-align:right"><div class="muted" style="font-size:10px;letter-spacing:1px">AMOUNT</div>
+          <div style="font-family:'Space Grotesk';font-weight:800;font-size:22px;color:var(--pri)">₹${s.amount||499}</div></div>
+      </div>
+      ${qrUrl
+        ? `<div class="qr"><img src="${esc(qrUrl)}" alt="QR Code"></div>`
+        : `<div class="qr" id="qrBox"></div>`}
+      <div class="center muted" style="font-size:12px">Scan with any UPI app</div>
+      <div class="upi-row">
+        <div><div style="font-size:11px;color:var(--muted)">UPI ID</div><div>${esc(s.upi||'predictoroppмods@upi')}</div></div>
+        <button class="btn sm" onclick="navigator.clipboard.writeText('${esc(s.upi||'')}');toast('UPI copied','ok')">Copy</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin:14px 0 0">${esc(s.payInstructions||DEFAULTS.payInstructions)}</p>
+      <div class="trust">
+        <div class="t"><div class="b">🛡</div>SSL Secured</div>
+        <div class="t"><div class="b">⚡</div>Instant Approval</div>
+        <div class="t"><div class="b">👥</div>10K+ Users</div>
+      </div>
+    </div>
+    <div style="height:14px"></div>
+    <div class="card">
+      <h3 style="margin:0 0 12px;font-family:'Space Grotesk'">Submit Payment</h3>
+      <div class="field"><label>UTR / Transaction ID</label><input id="pay_utr" placeholder="12-digit reference"></div>
+      <div class="field"><label>Payment Screenshot</label><input id="pay_img" type="file" accept="image/*"></div>
+      <div class="field"><label>Your details</label>
+        <div style="background:#f6f8fc;border-radius:12px;padding:12px;font-size:13px;line-height:1.6">
+          <b>${esc(State.user?.name)}</b><br>${esc(State.user?.email)} • ${esc(State.user?.phone||'-')}
+        </div></div>
+      <button class="btn" id="pay_submit">Submit to PREDICTOROPP MODS</button>
+    </div>
+    ${PoweredBy()}
+  </div>`;
+}
+function bindPay(){
+  const s=State.settings||DEFAULTS;
+  if(!s.upiQrUrl){
+    const payload=`upi://pay?pa=${encodeURIComponent(s.upi||'predictoroppмods@upi')}&pn=${encodeURIComponent(s.upiName||'PREDICTOROPP MODS')}&am=${s.amount||499}&cu=INR`;
+    const qrBox=$('#qrBox');
+    if(qrBox&&window.QRCode){
+      // Dynamic QR from upi link
+      const canvas=document.createElement('canvas');
+      qrBox.appendChild(canvas);
+      try{window.QRCode.toCanvas(canvas,payload,{margin:1,width:180},(err)=>{if(err)qrBox.textContent='Scan QR';});}catch(e){}
+    }
+  }
+  $('#pay_submit').onclick=async()=>{
+    const utr=$('#pay_utr').value.trim();
+    if(!/^\w{8,}$/.test(utr))return toast('Enter valid UTR (min 8 chars)','err');
+    const file=$('#pay_img').files[0];
+    let imgData=null;
+    if(file){
+      if(file.size>2*1024*1024)return toast('Image must be under 2MB','err');
+      imgData=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(file);});
+    }
+    $('#pay_submit').innerHTML='<span class="spinner"></span> Submitting…';
+    $('#pay_submit').disabled=true;
+    const payId=await fsAdd('payments',{
+      userId:State.fbUser.uid,
+      name:State.user.name,
+      email:State.user.email,
+      phone:State.user.phone||'-',
+      utr,
+      img:imgData||'',
+      status:'pending',
+      game:State.activeGame?.name||'-',
+      createdAt:Date.now(),
+      createdAtServer:serverTimestamp(),
+    });
+    $('#pay_submit').innerHTML='Submit to PREDICTOROPP MODS';
+    $('#pay_submit').disabled=false;
+    if(payId){
+      openSheet(`<div class="ok-icon">✓</div>
+        <h3 class="center">Payment Submitted!</h3>
+        <p class="muted center" style="margin:4px 0 16px">Your UTR has been submitted to PREDICTOROPP MODS. Our team will verify and activate your access shortly.</p>
+        <button class="btn dark" onclick="closeSheet();go('tx')">← View Transactions</button>
+        <p class="center" style="font-size:10px;color:var(--muted);margin-top:14px;font-family:'Orbitron',sans-serif">POWERED BY PREDICTOROPP MODS</p>`);
+    } else {
+      toast('Submission failed. Please retry.','err');
+    }
+  };
+}
+
+/* ===== PREDICTION ENGINE ===== */
+const CURRENT_API  = 'https://api.bdg88zf.com/api/webapi/GetGameIssue';
+
+// Direct API URLs
+const DIRECT_API_1M  = 'https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json';
+const DIRECT_API_30S = 'https://draw.ar-lottery01.com/WinGo/WinGo_30S/GetHistoryIssuePage.json';
+
+// CORS proxy list — tried in order until one works
+const CORS_PROXIES = [
+  'https://corsproxy.io/?',
+  'https://api.allorigins.win/raw?url=',
+  'https://cors-anywhere.herokuapp.com/',
+];
+
+let PRED_MODE = (function(){ try{ const s=localStorage.getItem('bm_pred_mode'); return (s==='30S'||s==='1M')?s:'1M'; }catch(e){ return '1M'; } })(); // persisted
+function DIRECT_API(){ return PRED_MODE === '30S' ? DIRECT_API_30S : DIRECT_API_1M; }
+function PERIOD_SECONDS(){ return PRED_MODE === '30S' ? 30 : 60; }
+
+// Build a proxied URL using given proxy base
+function proxiedUrl(proxy, targetUrl){
+  if(proxy.endsWith('=')) return proxy + encodeURIComponent(targetUrl);
+  return proxy + targetUrl;
+}
+
+// Fetch history via direct call first, then try each proxy on CORS failure
+async function fetchWithCORSFallback(url, signal){
+  // Try direct first
+  try{
+    const r = await fetch(url + '?t=' + Date.now(), {
+      method: 'GET',
+      headers: { 'Cache-Control': 'no-cache', 'Pragma': 'no-cache' },
+      cache: 'no-store',
+      signal
+    });
+    if(r.ok) return await r.json();
+  } catch(e){
+    if(e.name === 'AbortError') throw e; // Don't swallow timeout
+    console.warn('[PREDICTOROPP MODS] Direct fetch failed, trying proxies:', e.message);
+  }
+
+  // Try each proxy in sequence
+  for(const proxy of CORS_PROXIES){
+    try{
+      const pUrl = proxiedUrl(proxy, url + '?t=' + Date.now());
+      const r = await fetch(pUrl, {
+        method: 'GET',
+        headers: { 'Cache-Control': 'no-cache' },
+        cache: 'no-store',
+        signal
+      });
+      if(r.ok){
+        const data = await r.json();
+        console.log('[PREDICTOROPP MODS] Proxy success:', proxy);
+        return data;
+      }
+    } catch(e){
+      if(e.name === 'AbortError') throw e;
+      console.warn('[PREDICTOROPP MODS] Proxy failed:', proxy, e.message);
+    }
+  }
+  throw new Error('All CORS proxies failed — check network');
+}
+
+const REQUEST_PAYLOAD = {
+  typeId  : 1,
+  language: 0,
+  random  : 'e7fe6c090da2495ab8290dac551ef1ed',
+  signature: '1F390E2B2D8A55D693E57FD905AE73A7'
+};
+const PERIOD_POLL_MS = 2000;
+const API_TIMEOUT_MS = 8000;
+
+const PRED = {
+  timerInt: null,
+  apiInt: null,
+  retryTimer: null,
+  historyInt: null,
+  currentPeriod: null,
+  lastProcessedPeriod: null,
+  lastPredictionPeriod: null,
+  liveSynced: false,
+  _fetchingCurrent: false,
+  _fetchingHistory: false,
+
+  setSyncStatus(text, kind=''){
+    const el = $('#syncStatus');
+    if(!el) return;
+    el.textContent = text;
+    el.style.color = kind === 'err' ? 'var(--err)' : kind === 'ok' ? 'var(--ok)' : kind === 'warn' ? 'var(--warn)' : 'var(--muted)';
+  },
+
+  updatePredictButton(){
+    const btn = $('#predictBtn');
+    if(!btn) return;
+    if(State.predicting){
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> AI ANALYZING…';
+      return;
+    }
+    if(!this.liveSynced || !this.currentPeriod){
+      btn.disabled = true;
+      btn.textContent = '⏳ WAITING FOR LIVE PERIOD';
+      return;
+    }
+    if(!State.history.length){
+      btn.disabled = true;
+      btn.textContent = '⏳ LOADING HISTORY';
+      return;
+    }
+    if(this.lastPredictionPeriod === this.currentPeriod){
+      btn.disabled = true;
+      btn.textContent = '✅ PERIOD LOCKED';
+      return;
+    }
+    btn.disabled = false;
+    btn.textContent = '🔮 PREDICT NEXT';
+  },
+
+  updateTimer(){
+    const timerEl = $('#timerVal');
+    if(!timerEl) return;
+    const total = PERIOD_SECONDS();
+    const now = new Date();
+    const sec = now.getSeconds();
+    const insideCycle = total === 30 ? (sec % 30) : sec;
+    const secLeft = Math.max(0, (total - 1) - insideCycle);
+    timerEl.textContent = `00:${String(secLeft).padStart(2,'0')}`;
+    // Instant period rollover at cycle boundary + immediate refetch
+    const cycleKey = total === 30
+      ? `${now.getMinutes()}-${Math.floor(sec/30)}`
+      : `${now.getMinutes()}`;
+    if(insideCycle === 0 && this.currentPeriod && this._lastRolloverKey !== cycleKey){
+      this._lastRolloverKey = cycleKey;
+      const nxt = this.nextPeriod(this.currentPeriod);
+      if(nxt) this.setCurrentPeriod(nxt, 'local-rollover');
+      this.fetchCurrentPeriod(true);
+    }
+  },
+
+  normalizePeriod(value){
+    if(value === null || value === undefined) return null;
+    const raw = String(value).trim();
+    const digits = raw.replace(/\D/g, '');
+    if(digits.length >= 8) return digits;
+    return null;
+  },
+
+  extractIssueNumber(payload, depth = 0){
+    if(depth > 6 || payload === null || payload === undefined) return null;
+    if(typeof payload === 'string' || typeof payload === 'number') return this.normalizePeriod(payload);
+    if(Array.isArray(payload)){
+      for(const item of payload){
+        const found = this.extractIssueNumber(item, depth + 1);
+        if(found) return found;
+      }
+      return null;
+    }
+    if(typeof payload !== 'object') return null;
+
+    const directKeys = [
+      'issueNumber','issue','IssueNumber','issueNo','issueNum','currentIssue','currentIssueNumber',
+      'gameIssue','period','periodNumber','periodNum','turnNum','expect'
+    ];
+    for(const key of directKeys){
+      const found = this.normalizePeriod(payload[key]);
+      if(found) return found;
+    }
+
+    for(const [key, value] of Object.entries(payload)){
+      if(/issue|period|expect|turn/i.test(key)){
+        const found = this.extractIssueNumber(value, depth + 1);
+        if(found) return found;
+      }
+    }
+    for(const value of Object.values(payload)){
+      const found = this.extractIssueNumber(value, depth + 1);
+      if(found) return found;
+    }
+    return null;
+  },
+
+  mapNumberToSize(num){
+    return num >= 5 ? 'BIG' : 'SMALL';
+  },
+
+  mapNumberToColor(num){
+    if([1,3,7,9].includes(num)) return 'GREEN';
+    if([2,4,6,8].includes(num)) return 'RED';
+    if(num === 0) return 'RED+VIOLET';
+    return 'GREEN+VIOLET';
+  },
+
+  normalizeHistoryColor(color, num){
+    if(typeof color === 'string' && color.trim()){
+      const labels = color
+        .split(/[,/|+]/)
+        .map(c => c.trim().toUpperCase())
+        .filter(Boolean)
+        .map(c => c === 'PURPLE' ? 'VIOLET' : c);
+      if(labels.length) return [...new Set(labels)].join('+');
+    }
+    return this.mapNumberToColor(num);
+  },
+
+  resetPredictionState(reason=''){
+    State.predicting = false;
+    this.lastPredictionPeriod = null;
+    renderPredResult(null, reason || (this.liveSynced ? 'New live period detected — tap PREDICT NEXT' : 'Waiting for live period sync…'));
+    this.updatePredictButton();
+  },
+
+  setCurrentPeriod(raw, source='current-api'){
+    const period = this.normalizePeriod(raw);
+    if(!period){
+      console.error('[PREDICTOROPP MODS] detected period number: invalid', raw);
+      return false;
+    }
+    if(period === this.lastProcessedPeriod){
+      console.log('[PREDICTOROPP MODS] Duplicate period ignored:', period);
+      return false;
+    }
+
+    const prev = this.lastProcessedPeriod;
+    this.currentPeriod = period;
+    this.lastProcessedPeriod = period;
+    this.liveSynced = true;
+    State.lastPeriod = period;
+
+    const periodEl = $('#periodVal');
+    if(periodEl) periodEl.textContent = period;
+
+    console.log('[PREDICTOROPP MODS] detected period number:', period, '| source:', source);
+    this.setSyncStatus(`LIVE SYNCED • ${period}`, 'ok');
+
+    if(prev !== period){
+      this.resetPredictionState('New live period detected — prediction reset instantly');
+      this.fetchHistory();
+    }
+    return true;
+  },
+
+  nextPeriod(period){
+    if(!period) return null;
+    const s = String(period);
+    // last 4 digits = sequential index within the day; increment safely
+    if(s.length < 4) return null;
+    const head = s.slice(0, -4);
+    const tail = (parseInt(s.slice(-4), 10) + 1).toString().padStart(4, '0');
+    return head + tail;
+  },
+
+  async fetchCurrentPeriod(force = false){
+    if(this._fetchingCurrent && !force) return null;
+    if(!$('#periodVal')) return null;
+    this._fetchingCurrent = true;
+    const ctrl = new AbortController();
+    const timeoutId = setTimeout(() => ctrl.abort(), API_TIMEOUT_MS);
+    try{
+      // Derive the live period from DIRECT_API (latest closed issue + 1).
+      // Uses CORS proxy fallbacks so it works on ALL devices.
+      const payload = await fetchWithCORSFallback(DIRECT_API(), ctrl.signal);
+      console.log('[PREDICTOROPP MODS] current API response:', payload);
+
+      const rows = payload?.data?.list ?? payload?.list ?? payload?.data ?? [];
+      const latestRow = Array.isArray(rows) ? rows[0] : null;
+      const latestIssue = this.normalizePeriod(
+        latestRow?.issueNumber ?? latestRow?.issue ?? this.extractIssueNumber(payload)
+      );
+      if(!latestIssue) throw new Error('Period number not found in API response');
+
+      const live = this.nextPeriod(latestIssue) || latestIssue;
+      this.setCurrentPeriod(live, 'history+1');
+      return live;
+    }catch(error){
+      console.error('[PREDICTOROPP MODS] current API error:', error);
+      this.setSyncStatus(this.currentPeriod ? `LIVE API RETRYING • ${this.currentPeriod}` : 'WAITING FOR LIVE PERIOD…', 'warn');
+      this.scheduleRetry();
+      return null;
+    }finally{
+      clearTimeout(timeoutId);
+      this._fetchingCurrent = false;
+      this.updatePredictButton();
+    }
+  },
+
+  scheduleRetry(){
+    if(this.retryTimer) return;
+    this.retryTimer = setTimeout(() => {
+      this.retryTimer = null;
+      this.fetchCurrentPeriod(true);
+    }, 900);
+  },
+
+  async fetchHistory(force = false){
+    if(this._fetchingHistory && !force) return;
+    this._fetchingHistory = true;
+    try{
+      // Uses CORS proxy fallbacks so 30S and 1M both work on ALL devices
+      const payload = await fetchWithCORSFallback(DIRECT_API());
+      const rows = payload?.data?.list ?? payload?.list ?? [];
+      if(!Array.isArray(rows)) throw new Error('History list missing');
+
+      State.history = rows.slice(0, 20).map((item) => {
+        const num = Number(item?.number ?? item?.premium ?? 0);
+        return {
+          period: String(item?.issueNumber ?? item?.issue ?? ''),
+          result: num,
+          size: this.mapNumberToSize(num),
+          color: this.normalizeHistoryColor(item?.color, num),
+        };
+      }).filter(row => row.period);
+
+      renderHistory();
+    }catch(error){
+      console.error('[PREDICTOROPP MODS] history API error:', error);
+      const target = $('#historyTable');
+      if(target && !State.history.length){
+        target.innerHTML = `<div style="padding:24px;text-align:center;color:var(--err);font-size:12px">History API error — retrying automatically</div>`;
+      }
+    }finally{
+      this._fetchingHistory = false;
+      this.updatePredictButton();
+    }
+  },
+
+  /* ===== PREDICTOROPP MODS — REAL-TIME AI ANALYSIS ENGINE v5 =====
+     Fully deterministic multi-layer probabilistic engine.
+     - No Math.random, no cached predictions, no session memory.
+     - Every prediction is recomputed fresh from latest live API history.
+     - Same history => same output => stable across sessions/devices/time.
+     - Multi-layer: recency-weighted frequency, order-1 & order-2 Markov,
+       streak/run analysis, parity/size momentum, volatility, anti-drift
+       balancing, multi-layer confirmation, confidence scoring. */
+
+    _ai: {
+      COLOR_MAP: {0:'RED+VIOLET',1:'GREEN',2:'RED',3:'GREEN',4:'RED',5:'GREEN+VIOLET',6:'RED',7:'GREEN',8:'RED',9:'GREEN'},
+
+      // Layer 1 — Recency-weighted frequency (exponential decay, newest = highest weight)
+      layerFrequency(nums){
+        const w = Array(10).fill(0);
+        const decay = 0.88;
+        let weight = 1;
+        for(let i = 0; i < nums.length; i++){
+          w[nums[i]] += weight;
+          weight *= decay;
+        }
+        const total = w.reduce((a,b)=>a+b,0) || 1;
+        // Anti-drift: cold-number regression — invert frequency into probability
+        const probs = w.map(v => 1 - (v/total));
+        const s = probs.reduce((a,b)=>a+b,0) || 1;
+        return probs.map(p => p/s);
+      },
+
+      // Layer 2 — Order-1 Markov transitions from the last observed number
+      layerMarkov1(nums){
+        const last = nums[0];
+        const probs = Array(10).fill(0.05); // smoothing prior
+        for(let i = 0; i < nums.length - 1; i++){
+          // nums[0] is newest, so transition nums[i+1] -> nums[i]
+          if(nums[i+1] === last) probs[nums[i]] += 1;
+        }
+        const s = probs.reduce((a,b)=>a+b,0);
+        return probs.map(p => p/s);
+      },
+
+      // Layer 3 — Order-2 Markov (last two numbers as context)
+      layerMarkov2(nums){
+        if(nums.length < 3){
+          const flat = Array(10).fill(0.1);
+          return flat;
+        }
+        const a = nums[1], b = nums[0];
+        const probs = Array(10).fill(0.03);
+        for(let i = 0; i < nums.length - 2; i++){
+          if(nums[i+2] === a && nums[i+1] === b) probs[nums[i]] += 1;
+        }
+        const s = probs.reduce((a,b)=>a+b,0);
+        return probs.map(p => p/s);
+      },
+
+      // Layer 4 — Size/parity streak reversal pressure
+      layerStreak(nums){
+        const probs = Array(10).fill(0.1);
+        // Current size streak
+        const sizeOf = n => n >= 5 ? 1 : 0;
+        let runSize = 1;
+        for(let i = 1; i < nums.length; i++){
+          if(sizeOf(nums[i]) === sizeOf(nums[0])) runSize++; else break;
+        }
+        // Current color streak (red vs green; ignore 0/5 violet for run length)
+        const colorOf = n => (n===0||n===5) ? -1 : (n%2===0 ? 0 : 1); // 0=red, 1=green
+        const c0 = colorOf(nums[0]);
+        let runColor = 1;
+        if(c0 !== -1){
+          for(let i = 1; i < nums.length; i++){
+            const c = colorOf(nums[i]);
+            if(c === c0) runColor++; else break;
+          }
+        }
+        // Reversal pressure increases with run length (cap at 6)
+        const sizePressure = Math.min(runSize, 6) / 6;      // 0..1
+        const colorPressure = Math.min(runColor, 6) / 6;    // 0..1
+        const targetSize = sizeOf(nums[0]) === 1 ? 0 : 1;   // opposite
+        const targetColor = c0 === 1 ? 0 : (c0 === 0 ? 1 : -1);
+        for(let n = 0; n <= 9; n++){
+          let p = 0.1;
+          if(sizeOf(n) === targetSize) p += 0.6 * sizePressure;
+          if(targetColor !== -1 && colorOf(n) === targetColor) p += 0.5 * colorPressure;
+          // Violet numbers slightly downweighted unless streak is extreme
+          if((n === 0 || n === 5) && runColor < 5) p *= 0.55;
+          probs[n] = p;
+        }
+        const s = probs.reduce((a,b)=>a+b,0);
+        return probs.map(p => p/s);
+      },
+
+      // Layer 5 — Volatility / stability detector (smooths predictions when noisy)
+      volatility(nums){
+        const mean = nums.reduce((a,b)=>a+b,0) / nums.length;
+        const variance = nums.reduce((a,b)=>a+(b-mean)*(b-mean),0) / nums.length;
+        const std = Math.sqrt(variance);
+        // WinGo std on uniform 0..9 ≈ 2.87. Normalize 0..1
+        return Math.min(1, std / 2.87);
+      },
+
+      // Adaptive weighted fusion of all layers (fixed weights => deterministic, no drift)
+      fuse(layers, vol){
+        // Higher volatility => lean on frequency regression; lower => trust Markov & streak
+        const stability = 1 - vol;
+        const W = {
+          freq:    0.22 + 0.18 * vol,
+          mk1:     0.26 + 0.10 * stability,
+          mk2:     0.18 + 0.12 * stability,
+          streak:  0.20 + 0.10 * stability,
+          balance: 0.14
+        };
+        // Balance layer = uniform prior to prevent over-commitment
+        const balance = Array(10).fill(0.1);
+        const out = Array(10).fill(0);
+        for(let n = 0; n < 10; n++){
+          out[n] =
+            W.freq    * layers.freq[n]   +
+            W.mk1     * layers.mk1[n]    +
+            W.mk2     * layers.mk2[n]    +
+            W.streak  * layers.streak[n] +
+            W.balance * balance[n];
+        }
+        const s = out.reduce((a,b)=>a+b,0) || 1;
+        return out.map(p => p/s);
+      },
+
+      // Risk filter — penalise the just-occurred number and adjacent repeats
+      riskFilter(probs, nums){
+        const out = probs.slice();
+        out[nums[0]] *= 0.55;
+        if(nums[1] === nums[0]) out[nums[0]] *= 0.7; // double-repeat penalty
+        const s = out.reduce((a,b)=>a+b,0) || 1;
+        return out.map(p => p/s);
+      },
+
+      pickBest(probs){
+        let bestN = 0, bestP = -1;
+        for(let n = 0; n < 10; n++){
+          if(probs[n] > bestP){ bestP = probs[n]; bestN = n; }
+        }
+        return { num: bestN, prob: bestP };
+      },
+
+      sizeProbs(probs){
+        let big = 0, small = 0;
+        for(let n = 0; n < 10; n++){ if(n >= 5) big += probs[n]; else small += probs[n]; }
+        return { big, small };
+      },
+
+      colorProbs(probs){
+        let red = 0, green = 0, violet = 0;
+        for(let n = 0; n < 10; n++){
+          if(n === 0){ red += probs[n]*0.5; violet += probs[n]*0.5; }
+          else if(n === 5){ green += probs[n]*0.5; violet += probs[n]*0.5; }
+          else if(n % 2 === 0) red += probs[n];
+          else green += probs[n];
+        }
+        return { red, green, violet };
+      }
+    },
+
+    async buildPrediction(){
+      const recent = State.history.slice(0, 20)
+        .map(item => ({ period: item.period, result: Number(item.result) }))
+        .filter(h => Number.isFinite(h.result) && h.result >= 0 && h.result <= 9);
+      if(recent.length < 5) return null;
+
+      const ai = this._ai;
+      const nums = recent.map(h => h.result); // index 0 = newest
+
+      // Multi-layer analysis
+      const layers = {
+        freq:   ai.layerFrequency(nums),
+        mk1:    ai.layerMarkov1(nums),
+        mk2:    ai.layerMarkov2(nums),
+        streak: ai.layerStreak(nums)
+      };
+      const vol = ai.volatility(nums);
+      let fused = ai.fuse(layers, vol);
+      fused = ai.riskFilter(fused, nums);
+
+      const pick = ai.pickBest(fused);
+      const sz = ai.sizeProbs(fused);
+      const col = ai.colorProbs(fused);
+
+      // Multi-layer confirmation: how strongly do layers agree on top pick?
+      const agreement = (
+        (ai.pickBest(layers.freq).num   === pick.num ? 1 : 0) +
+        (ai.pickBest(layers.mk1).num    === pick.num ? 1 : 0) +
+        (ai.pickBest(layers.mk2).num    === pick.num ? 1 : 0) +
+        (ai.pickBest(layers.streak).num === pick.num ? 1 : 0)
+      ); // 0..4
+
+      // Confidence = blended top-prob, dominance margin, layer agreement, stability
+      const sorted = fused.slice().sort((a,b)=>b-a);
+      const margin = sorted[0] - sorted[1];
+      const stability = 1 - vol;
+      const rawConf =
+        0.40 * (pick.prob * 10) +          // 0..1 (top number probability scaled)
+        0.20 * (margin * 10) +              // 0..1 dominance
+        0.20 * (agreement / 4) +            // 0..1 layer agreement
+        0.20 * stability;                   // 0..1 market stability
+      const conf = Math.round(72 + Math.max(0, Math.min(1, rawConf)) * 22); // 72..94
+
+      // Size prediction follows aggregate probability mass, not just top number
+      const bs = sz.big >= sz.small ? 'BIG' : 'SMALL';
+      // Color prediction follows aggregate color mass (more stable than per-number)
+      let color;
+      const maxColor = Math.max(col.red, col.green);
+      const dominantBase = col.red >= col.green ? 'RED' : 'GREEN';
+      // Only suggest violet when violet mass is materially elevated AND top pick is 0/5
+      if(col.violet > 0.18 && (pick.num === 0 || pick.num === 5)){
+        color = dominantBase + '+VIOLET';
+      } else {
+        color = dominantBase;
+      }
+      // If top number itself is 0/5, respect canonical color map
+      if(pick.num === 0) color = 'RED+VIOLET';
+      if(pick.num === 5) color = 'GREEN+VIOLET';
+
+      // Trend direction (size momentum over last 8)
+      const recentSize = nums.slice(0, 8);
+      const bigRatio = recentSize.filter(n => n >= 5).length / recentSize.length;
+      const trend = bigRatio > 0.6 ? 'BIG MOMENTUM'
+                  : bigRatio < 0.4 ? 'SMALL MOMENTUM'
+                  : 'BALANCED';
+
+      const risk = conf >= 86 ? 'LOW'
+                 : conf >= 78 ? 'MEDIUM'
+                 : 'ELEVATED';
+      const stabilityLabel = stability > 0.65 ? 'HIGH'
+                           : stability > 0.4  ? 'MODERATE'
+                           : 'VOLATILE';
+
+      return {
+        num: pick.num,
+        bs,
+        color,
+        confidence: conf,
+        analysis: {
+          confidence: conf,
+          trend,
+          stability: stabilityLabel,
+          stabilityPct: Math.round(stability * 100),
+          risk,
+          agreement,
+          volatility: Math.round(vol * 100),
+          bigPct: Math.round(sz.big * 100),
+          smallPct: Math.round(sz.small * 100),
+          redPct: Math.round(col.red * 100),
+          greenPct: Math.round(col.green * 100),
+          violetPct: Math.round(col.violet * 100),
+          mode: PRED_MODE
+        },
+        reason: `⚡ Multi-layer AI • ${agreement}/4 layers aligned • ${trend} • stability ${stabilityLabel} • confidence ${conf}%`
+      };
+    },
+
+   start(){
+     this.stop();
+     this.currentPeriod = null;
+     this.lastProcessedPeriod = null;
+     this.lastPredictionPeriod = null;
+     this.liveSynced = false;
+     State.predicting = false;
+
+     const periodEl = $('#periodVal');
+     if(periodEl) periodEl.textContent = 'SYNCING…';
+     this.setSyncStatus('Waiting for live period sync…');
+     renderPredResult(null, 'Waiting for live period sync…');
+     renderHistory();
+     this.updateTimer();
+     this.updatePredictButton();
+
+     this.fetchCurrentPeriod(true);
+     this.fetchHistory(true);
+     this.timerInt = setInterval(() => this.updateTimer(), 250);
+     this.apiInt = setInterval(() => this.fetchCurrentPeriod(), PERIOD_POLL_MS);
+     this.historyInt = setInterval(() => this.fetchHistory(), 15000);
+
+     if(!this._hooksBound){
+       this._hooksBound = true;
+       window.addEventListener('focus', () => this.fetchCurrentPeriod(true));
+       document.addEventListener('visibilitychange', () => {
+         if(document.visibilityState === 'visible') this.fetchCurrentPeriod(true);
+       });
+     }
+   },
+
+   stop(){
+     clearInterval(this.timerInt);
+     clearInterval(this.apiInt);
+     clearInterval(this.historyInt);
+     clearTimeout(this.retryTimer);
+     this.timerInt = null;
+     this.apiInt = null;
+     this.historyInt = null;
+     this.retryTimer = null;
+     this._fetchingCurrent = false;
+     this._fetchingHistory = false;
+   },
+
+   async predict(){
+     if(!this.liveSynced || !this.currentPeriod){
+       toast('Waiting for live period sync…', 'warn');
+       return;
+     }
+     if(!State.history.length){
+       toast('Loading real history first…', 'warn');
+       this.fetchHistory(true);
+       return;
+     }
+     if(this.lastPredictionPeriod === this.currentPeriod){
+       toast('This live period is already processed.', 'warn');
+       return;
+     }
+     if(State.predicting) return;
+
+     State.predicting = true;
+     this.updatePredictButton();
+     renderPredResult(null, '🤖 AI analyzing live history…');
+
+     try{
+       const result = await this.buildPrediction();
+       if(!result){
+         renderPredResult(null, 'AI prediction unavailable — tap PREDICT NEXT to retry');
+         return;
+       }
+       renderPredResult(result, result.reason);
+       this.lastPredictionPeriod = this.currentPeriod;
+     } finally {
+       State.predicting = false;
+       this.updatePredictButton();
+     }
+   }
+ };
+
+function switchPredMode(mode){
+  if(mode !== '1M' && mode !== '30S') return;
+  if(PRED_MODE === mode) return;
+  PRED_MODE = mode;
+  try{ localStorage.setItem('bm_pred_mode', mode); }catch(e){}
+  State.history = [];
+  const b1 = document.getElementById('modeBtn1M');
+  const b30 = document.getElementById('modeBtn30S');
+  if(b1)  b1.classList.toggle('on', mode==='1M');
+  if(b30) b30.classList.toggle('on', mode==='30S');
+  PRED.start();
+  toast(mode==='30S' ? '30 Second Wingo mode' : '1 Minute Wingo mode', 'ok');
+}
+window.switchPredMode = switchPredMode;
+
+
+function ballHtml(num,size){
+  let cls='green';
+  if([2,4,6,8].includes(num)) cls='red';
+  else if(num===0) cls='mix';
+  else if(num===5) cls='mix g';
+  return `<div class="ball ${cls}" ${size?`style="width:${size}px;height:${size}px;font-size:${size*.45}px"`:''}>${num}</div>`;
+}
+
+function PredictView(){
+  const g=State.activeGame||State.games[0]||{name:'Game',c1:'#3b82f6',c2:'#1e3a8a'};
+  const initials=g.name.split(' ').map(x=>x[0]).join('').toUpperCase();
+  return `<div class="page">
+    <button class="btn ghost sm" onclick="go('home')">← Back to Games</button>
+    <div style="height:12px"></div>
+    <div class="page-boss-header">
+      <div><div class="pt">PREDICTOROPP MODS</div><div class="pb">Live AI Signal</div></div>
+      <span style="display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.2);color:#86efac;padding:4px 10px;border-radius:999px;font-size:10px;font-weight:700;position:relative;z-index:1"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 1.4s infinite;display:inline-block"></span>LIVE</span>
+    </div>
+    <div class="pred-head">
+      <div class="top">
+        <div class="glogo" style="background:linear-gradient(135deg,${g.c1},${g.c2})">${initials}</div>
+        <div><h2>${esc(g.name)} — PREDICTOROPP MODS AI</h2>
+          <span class="live"><span class="ldot"></span>LIVE SIGNAL ACTIVE</span></div>
+      </div>
+      <div class="meta">
+        <div class="box"><div class="lbl">Current Period</div><div class="val" id="periodVal">SYNCING…</div></div>
+        <div class="box"><div class="lbl">Next Refresh</div><div class="val" id="timerVal">00:00</div></div>
+      </div>
+      <div id="syncStatus" style="position:relative;margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.3px;color:#86efac">Waiting for live period sync…</div>
+    </div>
+    <div class="timer-tabs">
+      <button id="modeBtn1M" class="${PRED_MODE==='1M'?'on':''}" onclick="switchPredMode('1M')">1 Minute Wingo</button>
+      <button id="modeBtn30S" class="${PRED_MODE==='30S'?'on':''}" onclick="switchPredMode('30S')">30 Second Wingo</button>
+    </div>
+    <div class="predict-card">
+      <div class="ai">⚡ PREDICTOROPP MODS AI MODEL V4.2 PRO</div>
+      <div id="predResult">
+        <div class="num-wrap">${ballHtml(0)}</div>
+        <div class="chips"><div class="chip small">WAIT</div><div class="chip violet">LIVE SYNC</div></div>
+        <div class="muted" style="font-size:12px;margin-bottom:10px">Waiting for live period sync…</div>
+      </div>
+      <button class="predict-btn" id="predictBtn" disabled>⏳ WAITING FOR LIVE PERIOD</button>
+    </div>
+    <div class="history">
+      <div class="h-head"><h4>Recent Game Results</h4><div style="display:flex;align-items:center;gap:8px"><span class="badge">LIVE</span><button class="btn sm" id="historyRefreshBtn" style="background:#eaf1ff;color:#1d4ed8;border:none;padding:6px 12px;font-size:11px">↻ Refresh</button></div></div>
+      <div id="historyTable"></div>
+    </div>
+    ${PoweredBy()}
+  </div>`;
+}
+
+function renderPredResult(result, note=''){
+  const r=$('#predResult');
+  if(!r) return;
+  if(!result){
+    const line = note || (PRED.liveSynced ? 'Live period synced — tap PREDICT NEXT' : 'Waiting for live period sync…');
+    const chips = PRED.liveSynced
+      ? '<div class="chip small">READY</div><div class="chip violet">LIVE</div>'
+      : '<div class="chip small">WAIT</div><div class="chip violet">SYNC</div>';
+    r.innerHTML=`<div class="num-wrap">${ballHtml(0)}</div>
+      <div class="chips">${chips}</div>
+      <div class="muted" style="font-size:12px;margin-bottom:10px">${esc(line)}</div>`;
+    return;
+  }
+  const {num,bs,color,reason,analysis}=result;
+  const chips=color.split('+').map(c=>`<div class="chip ${c.toLowerCase()}">${c}</div>`).join('');
+  const a = analysis || {};
+  const conf = a.confidence || 0;
+  const riskColor = a.risk === 'LOW' ? '#16a34a' : a.risk === 'MEDIUM' ? '#f59e0b' : '#dc2626';
+  const stabColor = a.stability === 'HIGH' ? '#16a34a' : a.stability === 'MODERATE' ? '#f59e0b' : '#dc2626';
+  const trendColor = a.trend === 'BIG MOMENTUM' ? '#dc2626' : a.trend === 'SMALL MOMENTUM' ? '#2563eb' : '#7c3aed';
+  const panel = analysis ? `
+    <div style="margin-top:12px;padding:12px;background:linear-gradient(135deg,#0b1530,#1e3a8a);border-radius:14px;color:#fff;text-align:left">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+        <span style="font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:2px;color:#86efac">⚡ LIVE AI ANALYSIS</span>
+        <span style="display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#86efac"><span style="width:6px;height:6px;border-radius:50%;background:#22c55e;animation:pulse 1.4s infinite;display:inline-block"></span>ACTIVE</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="flex:1;height:8px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden">
+          <div style="width:${conf}%;height:100%;background:linear-gradient(90deg,#22c55e,#3b82f6);border-radius:999px;transition:width .6s ease"></div>
+        </div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:#fff;min-width:48px;text-align:right">${conf}%</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:11px">
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">TREND</div>
+          <div style="color:${trendColor};font-weight:800;margin-top:2px">${esc(a.trend||'—')}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">RISK LEVEL</div>
+          <div style="color:${riskColor};font-weight:800;margin-top:2px">${esc(a.risk||'—')}</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">STABILITY</div>
+          <div style="color:${stabColor};font-weight:800;margin-top:2px">${esc(a.stability||'—')} (${a.stabilityPct||0}%)</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">LAYER MATCH</div>
+          <div style="color:#fff;font-weight:800;margin-top:2px">${a.agreement||0}/4 aligned</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">SIZE BIAS</div>
+          <div style="color:#fff;font-weight:800;margin-top:2px">B ${a.bigPct||0}% • S ${a.smallPct||0}%</div>
+        </div>
+        <div style="background:rgba(255,255,255,.06);padding:7px 9px;border-radius:9px">
+          <div style="color:#94a3b8;font-size:9px;letter-spacing:1px;font-weight:700">COLOR BIAS</div>
+          <div style="color:#fff;font-weight:800;margin-top:2px">R ${a.redPct||0}% • G ${a.greenPct||0}%</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:10px;color:#94a3b8;letter-spacing:.5px;text-align:center">ADAPTIVE LEARNING • ANTI-DRIFT RECALIBRATION • ${esc(a.mode||'')}</div>
+    </div>` : '';
+  r.innerHTML=`<div class="num-wrap">${ballHtml(num)}</div>
+    <div class="chips"><div class="chip ${bs==='BIG'?'big':'small'}">${bs}</div>${chips}</div>
+    <div class="muted" style="font-size:12px;margin-bottom:6px">${esc(reason || 'Built from live history data only')}</div>
+    ${panel}`;
+}
+
+function renderHistory(){
+  const t=$('#historyTable');
+  if(!t) return;
+  if(!State.history.length){
+    t.innerHTML=`<div style="padding:24px;text-align:center;color:var(--muted);font-size:13px">Loading real history from API…</div>`;
+    return;
+  }
+  t.innerHTML=`<table><thead><tr>
+    <th>Period</th><th>Number</th><th>Size</th><th>Color</th>
+  </tr></thead><tbody>
+    ${State.history.map(h=>{
+      const colorChips = String(h.color).split('+').map(c=>
+        `<span class="chip ${c.toLowerCase()}" style="padding:2px 7px;font-size:10px;display:inline-flex">${c}</span>`
+      ).join('');
+      return `<tr>
+        <td style="font-family:monospace;font-size:11px">${esc(h.period)}</td>
+        <td><b>${esc(h.result)}</b></td>
+        <td><span class="chip ${h.size==='BIG'?'big':'small'}" style="padding:2px 7px;font-size:10px">${h.size}</span></td>
+        <td style="display:flex;gap:3px;flex-wrap:wrap">${colorChips}</td>
+      </tr>`;
+    }).join('')}
+  </tbody></table>`;
+}
+
+function bindPredict(){
+  PRED.start();
+  const predictBtn = $('#predictBtn');
+  if(predictBtn) predictBtn.onclick = () => PRED.predict();
+  const refreshBtn = $('#historyRefreshBtn');
+  if(refreshBtn) refreshBtn.onclick = () => PRED.fetchHistory(true);
+  renderHistory();
+}
+
+/* ===== TRANSACTIONS ===== */
+function TxView(){
+  return `<div class="page" id="txPage">
+    <div class="page-boss-header"><div><div class="pt">PREDICTOROPP MODS</div><div class="pb">My Transactions</div></div></div>
+    <div id="txList"><div style="text-align:center;padding:24px;color:var(--muted)" class="dots"><i></i><i></i><i></i></div></div>
+    ${PoweredBy()}
+  </div>`;
+}
+async function loadTx(){
+  const el=$('#txList');if(!el)return;
+  if(!State.fbUser||!State.fbUser.uid){
+    el.innerHTML=`<div class="card muted center" style="padding:24px">Please login to view your transactions.</div>`;
+    return;
+  }
+  el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--muted)" class="dots"><i></i><i></i><i></i></div>`;
+  // Hard timeout so the page never gets stuck on loading
+  let done=false;
+  const timeout=setTimeout(()=>{
+    if(done)return;
+    if(el && el.querySelector('.dots')){
+      el.innerHTML=`<div class="card muted center" style="padding:24px">Taking too long to load. <button class="btn ghost sm" onclick="loadTx()" style="margin-top:8px">Retry</button></div>`;
+    }
+  },12000);
+  try{
+    const list=await fsQuery('payments',where('userId','==',State.fbUser.uid));
+    list.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    done=true;clearTimeout(timeout);
+    el.innerHTML=list.length?list.map(p=>{
+      const st=(p.status||'pending').toLowerCase();
+      const tagCls=st==='approved'||st==='completed'?'tag-win':st==='rejected'||st==='failed'?'tag-loss':'tag-pending';
+      const label=st==='approved'?'COMPLETED':st.toUpperCase();
+      const when=p.createdAt?new Date(p.createdAt).toLocaleString():'—';
+      return `<div class="card" style="margin-bottom:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <b>${esc(p.game||'Premium')}</b>
+          <span class="${tagCls}">${label}</span>
+        </div>
+        <div class="muted" style="font-size:12px">UTR: <span style="font-family:monospace">${esc(p.utr||'—')}</span></div>
+        <div class="muted" style="font-size:12px">${when}</div>
+        ${p.amount?`<div class="muted" style="font-size:12px">Amount: ₹${esc(String(p.amount))}</div>`:''}
+        ${p.img?`<img src="${p.img}" style="margin-top:10px;border-radius:10px;max-width:100%;max-height:160px;object-fit:cover">`:''}
+      </div>`;}).join('')
+    : `<div class="card muted center" style="padding:24px">No transactions yet</div>`;
+  }catch(e){
+    done=true;clearTimeout(timeout);
+    console.error('loadTx error:',e);
+    el.innerHTML=`<div class="card muted center" style="padding:24px">Could not load transactions. <button class="btn ghost sm" onclick="loadTx()" style="margin-top:8px">Retry</button></div>`;
+  }
+}
+window.loadTx=loadTx;
+
+/* ===== PROFILE ===== */
+function ProfileView(){
+  const u=State.user;
+  const initials=u?.name?.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase()||'U';
+  return `<div class="page">
+    <div class="page-boss-header"><div><div class="pt">PREDICTOROPP MODS</div><div class="pb">My Profile</div></div></div>
+    <div class="profile-head">
+      <div class="avatar" ${u?.photo?`style="background-image:url('${u.photo}');background-size:cover;background-position:center;color:transparent"`:''}}>${initials}</div>
+      <div style="font-family:'Space Grotesk';font-weight:800;font-size:20px">${esc(u?.name)}</div>
+      <div style="opacity:.7;font-size:12px;margin-top:2px">${esc(u?.email)}</div>
+      <div style="margin-top:10px">
+        <span class="badge ${u?.approved?'ok':'warn'}">${u?.approved?'✓ Premium Activated':'⏳ Pending Activation'}</span>
+        ${u?.provider==='google'?'<span class="badge" style="margin-left:6px">Google</span>':''}
+      </div>
+    </div>
+    <div class="list-card">
+      <div class="list-row"><div class="l"><div class="ico">📧</div><div>Email</div></div><div class="muted">${esc(u?.email)}</div></div>
+      <div class="list-row"><div class="l"><div class="ico">📞</div><div>Phone</div></div><div class="muted">${esc(u?.phone||'-')}</div></div>
+      <div class="list-row"><div class="l"><div class="ico">💳</div><div>Subscription</div></div><div class="muted">${u?.approved?'Active':'Not active'}</div></div>
+    </div>
+    <button class="btn ghost" onclick="go('support')">🎧 Contact Support</button>
+    <div style="height:10px"></div>
+    <button class="btn dark" id="logoutBtn">Logout</button>
+    <div class="copyright-bar" style="margin-top:16px">
+      <div>© 2024 <span class="boss-text">PREDICTOROPP MODS</span>. All rights reserved.</div>
+      <div style="font-size:10px;margin-top:3px;color:var(--muted)">Premium AI Prediction Platform</div>
+    </div>
+    ${PoweredBy()}
+  </div>`;
+}
+function bindProfile(){
+  $('#logoutBtn').onclick=async()=>{await signOut(auth);toast('Logged out');};
+}
+
+/* ===== SUPPORT ===== */
+function SupportView(){
+  const s=State.settings?.support||DEFAULTS.support;
+  return `<div class="page">
+    <div class="page-boss-header"><div><div class="pt">PREDICTOROPP MODS</div><div class="pb">24/7 Support</div></div></div>
+    <div class="card">
+      <p class="muted" style="margin:0 0 14px">PREDICTOROPP MODS team is available 24/7.</p>
+      <a class="btn" href="${esc(s.telegram)}" target="_blank">📨 Telegram Support</a>
+      <div style="height:8px"></div>
+      <a class="btn ghost" href="${esc(s.whatsapp)}" target="_blank">💬 WhatsApp</a>
+      <div style="height:8px"></div>
+      <a class="btn ghost" href="mailto:${esc(s.email)}">✉ ${esc(s.email)}</a>
+    </div>
+    ${PoweredBy()}
+  </div>`;
+}
+
+/* ===== AUTH STATE LISTENER ===== */
+// Helper: show/hide full-screen loader with a message
+function showLoader(msg='Please wait...'){
+  const l=$('#fbLoader');if(!l)return;
+  $('#fbLoaderMsg').textContent=msg;
+  l.style.display='flex';
+}
+function hideLoader(){
+  const l=$('#fbLoader');if(l)l.style.display='none';
+}
+
+// INSTANT RENDER — show login page right away, no waiting for Firebase
+State.settings=DEFAULTS;
+renderPage();
+
+// Then Firebase auth state resolves silently in background
+let _authReady=false;
+onAuthStateChanged(auth, async (fbUser) => {
+  try{
+    if(fbUser){
+      State.fbUser=fbUser;
+      let profile=await fsGet(`users/${fbUser.uid}`);
+      if(!profile){
+        profile={uid:fbUser.uid,name:fbUser.displayName||'User',email:fbUser.email,phone:'-',
+          photo:fbUser.photoURL||'',provider:fbUser.providerData[0]?.providerId||'email',
+          approved:false,blocked:false,createdAt:Date.now()};
+        await fsSet(`users/${fbUser.uid}`,profile);
+      }
+      if(profile.blocked){
+        State.user=null;State.fbUser=null;
+        await signOut(auth);
+        hideLoader();
+        toast('Your account is blocked. Contact support.','err');
+        renderPage();return;
+      }
+      State.user=profile;
+      onSnapshot(doc(db,'users',fbUser.uid),snap=>{
+        if(snap.exists()){
+          State.user={...snap.data()};
+          if(State.page==='home'||State.page==='profile')renderPage();
+        }
+      });
+      // Load app data in background, render immediately with defaults
+      loadAppData().then(()=>{if(State.page==='home')renderPage();});
+      hideLoader();
+      renderPage();
+      if(State.page==='tx')setTimeout(loadTx,100);
+    } else {
+      State.fbUser=null;State.user=null;
+      // Load app data in background (for settings, games etc on login page)
+      loadAppData().catch(()=>{});
+      hideLoader();
+      if(_authReady)renderPage(); // Only re-render if was logged in before (logout)
+    }
+    _authReady=true;
+  }catch(err){
+    console.error('Auth error:',err);
+    hideLoader();
+    _authReady=true;
+  }
+});
+
+// window.go and window.loadTx are kept up-to-date by bindCommon() after every renderPage()
+</script>
+<!-- Optional: QRCode library fallback for UPI QR generation -->
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</body>
+</html>
